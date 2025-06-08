@@ -4,7 +4,7 @@ export interface IProduct extends Document {
   _id: Types.ObjectId;
   name: string;
   price: number;
-  qty: number;
+  quantity: number;
   status: boolean;
   description: string;
   createDate: Date;
@@ -21,7 +21,7 @@ const productSchema = new Schema<IProduct>({
     type: Number,
     required: true
   },
-  qty: {
+  quantity: {
     type: Number,
     required: true
   },

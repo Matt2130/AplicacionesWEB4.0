@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { getTimeToken, loginMethod, updateToken, getAllUsers, getUserByUsername, saveUser, updateUser, deleteUser} from '../controllers/auth.controller';
-import { createOrder, getOrder } from "../controllers/order.controller";
+import { getTimeToken, loginMethod, updateToken, getAllUsers,
+        getUserByUsername, saveUser, updateUser, deleteUser} from '../controllers/auth.controller';
+import { createOrder, deleteOrder, getOrder, updateOrder } from "../controllers/order.controller";
 import { createProduct, getProducts } from "../controllers/product.controller";
 import { createRole, getRole } from "../controllers/role.controller";
 
@@ -19,6 +20,8 @@ router.patch('/delete-user/:userId', deleteUser);
 //Controlador para ORDER CRUD
 router.post('/createOrder', createOrder);
 router.get('/getAllOrders', getOrder);
+router.put('/updateOrder/:orderId', updateOrder);
+router.patch('/deleteOrder/:orderId', deleteOrder);
 
 //Controlador para PRODUCT CRUD
 router.post('/createProduct', createProduct);

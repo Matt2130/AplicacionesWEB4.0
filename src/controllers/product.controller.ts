@@ -3,16 +3,9 @@ import { Product } from "../models/product";
 
 export const createProduct = async (req: Request, res: Response) => {
     try {
-        const { name, price, qty, status, description, createDate, deleteDate} = req.body; 
-        const newProduct = new Product ({
-            name, 
-            price, 
-            qty, 
-            status, 
-            description, 
-            createDate, 
-            deleteDate
-        });
+        const { name, price, quantity, status, description, createDate, deleteDate} = req.body;
+        const newProduct = new Product (req.body);
+
         const product = await newProduct.save();
         return res.status(201).json({ message:"Producto resgistrado con exitó", product })
     } catch (error) {
