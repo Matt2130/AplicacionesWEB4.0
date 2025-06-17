@@ -1,5 +1,12 @@
 import { Document, Schema, Types, model } from "mongoose";
 
+interface IUserRole {
+    roleId: Types.ObjectId,
+  name: string;
+  type: "Administrador" | "Cliente" | "Empleado";
+  status: boolean;
+};
+
 export interface IUser extends Document {
     _id: Types.ObjectId,
     username:string;
@@ -8,10 +15,34 @@ export interface IUser extends Document {
     status:boolean;
     createDate:Date;
     deleteDate:Date;
-    role:string;
     firstName:string;
     lastName:string;
-}
+    roles: IUserRole[];
+};
+
+  const UserRoleSchema = new Schema<IUserRole>({
+    roleId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Role',
+      required: true
+    },
+    name: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    type: {
+        type: String,
+        required: true,
+        enum: ["Administrador", "Cliente", "Empleado"],
+        default: "Cliente"
+    },
+    status: {
+        type: Boolean,
+        required: true,
+        default: true
+    }
+}, { _id: false});
 
 const userSchema = new Schema<IUser>({
     username:{
@@ -39,10 +70,6 @@ const userSchema = new Schema<IUser>({
     deleteDate:{
         type:Date
     },
-    role:{
-        type:String,
-        required:true
-    },
     firstName:{
         type:String,
         required:true
@@ -50,7 +77,12 @@ const userSchema = new Schema<IUser>({
     lastName:{
         type:String,
         required:true
-    }
+    },
+    roles: {
+    type: [UserRoleSchema],
+    required: true,
+    validate: [(array: string | any[]) => array.length > 0, 'Debe contener al menos un rol']
+  }
 },
     { versionKey: false }
 );

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { getTimeToken, loginMethod, updateToken, getAllUsers,
         getUserByUsername, saveUser, updateUser, deleteUser} from '../controllers/auth.controller';
 import { createOrder, deleteOrder, getOrder, updateOrder } from "../controllers/order.controller";
-import { createProduct, getProducts } from "../controllers/product.controller";
+import { createProduct, getProducts, updateProducts, deleteProduct } from "../controllers/product.controller";
 import { createRole, getRole } from "../controllers/role.controller";
 
 const router = Router();
@@ -26,7 +26,8 @@ router.patch('/deleteOrder/:orderId', deleteOrder);
 //Controlador para PRODUCT CRUD
 router.post('/createProduct', createProduct);
 router.get('/getAllProducts', getProducts);
-
+router.put('/updateProducts/:productID', updateProducts);
+router.patch('/deleteProduct/:productID', deleteProduct)
 //Controlador para ROLE CRUD
 router.post('/createRol', createRole);
 router.get('/getAllRoles', getRole);

@@ -101,41 +101,45 @@ export const updateToken = (req: Request, res: Response) => {
 };
 
 export const saveUser = async (req: Request, res: Response) => {
-    try {
-        const { firstName, lastName, username, email, password, role } = req.body;
+  try {
+    const { firstName, lastName, username, email, password, roles } = req.body;
 
-        // Se genera el salt para la encriptación
-        const salt = await bcrypt.genSalt(10);
-        // crear la función
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        const newUser = new User({
-            firstName,
-            lastName,
-            username,
-            email,
-            password: hashedPassword, 
-            role
-        });
-
-        const user = await newUser.save();
-
-        return res.status(201).json({
-            message: "Usuario creado exitosamente",
-            user
-        });
-
-    } catch (error) {
-        return res.status(500).json({
-            message: "Error al crear usuario",
-            error
-        });
+    if (!roles || !Array.isArray(roles) || roles.length === 0) {
+      return res.status(400).json({
+        message: "Debes proporcionar al menos un rol para el usuario"
+      });
     }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = new User({
+      firstName,
+      lastName,
+      username,
+      email,
+      password: hashedPassword,
+      roles
+    });
+
+    const user = await newUser.save();
+
+    return res.status(201).json({
+      message: "Usuario creado exitosamente",
+      user
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error al crear usuario",
+      error
+    });
+  }
 };
 
 export const updateUser = async (req: Request, res:Response) => {
     const { userId } = req.params;
-    const { email, password, firstName, lastName, role } = req.body;
+    const { email, password, firstName, lastName } = req.body;
 
 
     const salt = await bcrypt.genSalt(10);
@@ -153,7 +157,6 @@ export const updateUser = async (req: Request, res:Response) => {
 
     user.password = hashedPassword != null ? hashedPassword : user.password
     user.email = email;
-    user.role = role;
     user.firstName = firstName;
     user.lastName = lastName;
 
