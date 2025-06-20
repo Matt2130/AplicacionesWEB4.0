@@ -4,6 +4,7 @@ import { getTimeToken, loginMethod, updateToken, getAllUsers,
 import { createOrder, deleteOrder, getOrder, updateOrder } from "../controllers/order.controller";
 import { createProduct, getProducts, updateProducts, deleteProduct } from "../controllers/product.controller";
 import { createRole, getRole } from "../controllers/role.controller";
+import { createMenu, getMenuRol } from "../controllers/menu.controller";
 
 const router = Router();
 
@@ -27,9 +28,14 @@ router.patch('/deleteOrder/:orderId', deleteOrder);
 router.post('/createProduct', createProduct);
 router.get('/getAllProducts', getProducts);
 router.put('/updateProducts/:productID', updateProducts);
-router.patch('/deleteProduct/:productID', deleteProduct)
+router.patch('/deleteProduct/:productID', deleteProduct);
+
 //Controlador para ROLE CRUD
 router.post('/createRol', createRole);
 router.get('/getAllRoles', getRole);
+
+//Controlador para Menu CRUD
+router.post('/createMenu', createMenu);
+router.get('/getMenu/:type', getMenuRol);
 
 export default router;

@@ -3,13 +3,17 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import UserForm from './modules/user/UserForm'
+import UserTable from './modules/user/UserTable'
+//import { Router, Routes } from 'react-router-dom'
+import SelectProducts from './modules/product/SelectProduct'
+import RadioOrder from './modules/order/RadioOrder'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-      <div>
+       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
@@ -30,7 +34,10 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
       {/* Llamar al componente*/}
-      <UserForm />
+      <UserForm /> <br /><br /><br /><br /><br /><br /><br />
+      <UserTable /> <br /><br /><br /><br /><br /><br /><br />
+      <SelectProducts /> <br /><br /><br /><br /><br /><br /><br />
+      <RadioOrder /> <br /><br /><br /><br /><br /><br /><br />
     </>
   )
 }
