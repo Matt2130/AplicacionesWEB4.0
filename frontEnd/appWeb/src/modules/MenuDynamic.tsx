@@ -24,16 +24,13 @@ const Icons: Record<string, any> = {
 function MenuComponent() {
   const [menuItems, setMenuItems] = useState<any[]>([]);
   const navigate = useNavigate();
-  const location = useLocation(); // Keep location for selectedKeys
+  const location = useLocation();
 
-  // Get current user role and token outside useEffect,
-  // but ensure they are stable or trigger the effect
   const userRole = getUserRole();
   const accessToken = getAccessToken();
 
   useEffect(() => {
     const fetchMenu = async () => {
-      // DEBUGGING: Logs for authentication state before fetching
       console.log("MenuComponent - Token from localStorage:", accessToken ? "Exist" : "Not Exist");
       console.log("MenuComponent - Role from localStorage:", userRole);
 
@@ -70,10 +67,8 @@ function MenuComponent() {
       }
     };
 
-    // Only fetch if role or accessToken changes, or on initial mount.
-    // This reduces redundant fetches if only pathname changes but role/token remain same.
     fetchMenu();
-  }, [userRole, accessToken]); // <-- Dependencies changed!
+  }, [userRole, accessToken]); 
 
   const renderMenu = () => {
     return menuItems.map((item) => {

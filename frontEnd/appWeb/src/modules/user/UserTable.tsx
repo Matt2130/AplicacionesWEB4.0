@@ -9,7 +9,7 @@ interface Role {
 }
 
 interface UserData {
-  key: string; // Typically user._id
+  key: string; 
   firstName: string;
   lastName: string;
   username: string;
@@ -23,22 +23,19 @@ const UserTable: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true); 
   const [searchText, setSearchText] = useState<string>(''); 
 
-  // Function to fetch users from the API
   useEffect(() => {
     const fetchUsers = async () => {
-      setLoading(true); // Start loading
+      setLoading(true); 
       try {
-        // You might need to add Authorization header here if this API is protected
-        const token = localStorage.getItem('token'); // Get token from local storage
+        const token = localStorage.getItem('token'); 
         const response = await fetch("http://localhost:3000/api/auth/get-users", {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` // Include the token if needed
+            'Authorization': `Bearer ${token}` 
           }
         });
 
         if (!response.ok) {
-          // Handle HTTP errors
           const errorData = await response.json();
           throw new Error(errorData.message || 'Error al obtener usuarios');
         }
@@ -54,29 +51,24 @@ const UserTable: React.FC = () => {
         }));
 
         setUsers(formattedUsers);
-        setFilteredUsers(formattedUsers); // Initialize filtered users with all users
+        setFilteredUsers(formattedUsers);
       } catch (error) {
         console.error("Error al obtener usuarios:", error);
-        // Optionally display an error message to the user
       } finally {
         setLoading(false); // Stop loading
       }
     };
 
     fetchUsers();
-  }, []); // Empty dependency array means this runs once on component mount
+  }, []);
 
-  // Function to handle the search logic
   const handleSearch = (value: string) => {
-    // Trim whitespace from the search value and convert to lowercase for case-insensitive search
     const searchValue = value.trim().toLowerCase();
-    setSearchText(searchValue); // Update the search text state
+    setSearchText(searchValue); 
 
     if (searchValue === '') {
-      // If search box is empty, show all users
       setFilteredUsers(users);
     } else {
-      // Filter users based on firstName, lastName, or username
       const filtered = users.filter(
         (user) =>
           user.firstName.toLowerCase().includes(searchValue) ||
@@ -89,14 +81,14 @@ const UserTable: React.FC = () => {
 
   return (
     <div style={{ padding: '24px' }}> 
-      <h1>Gestionar Usuarios</h1> 
+      <h1>Gestión de Usuarios</h1> 
       <Space style={{ marginBottom: 16 }}>
         <Search
           placeholder="Buscar por nombre, apellido o usuario"
-          onSearch={handleSearch} // Use the new handleSearch function
-          onChange={(e) => handleSearch(e.target.value)} // Add onChange for live search
-          value={searchText} // Bind value to state for controlled component
-          allowClear // Allows clearing the input
+          onSearch={handleSearch} 
+          onChange={(e) => handleSearch(e.target.value)} 
+          value={searchText} 
+          allowClear 
           enterButton="Buscar"
           style={{ width: 300 }}
         />

@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import SelectProducts from "../modules/product/SelectProduct";
-import RadioOrder from "../modules/order/RadioOrder";
+import OrderTable from "../modules/order/RadioOrder";
 import UserTable from "../modules/user/UserTable";
 import UserForm from "../modules/user/UserForm";
 import Dashboard from "../modules/dashboard/Dashboard";
@@ -44,7 +44,7 @@ const routes: AppRoute[] = [
     },
     {
       path: "/orders",
-      element: <RadioOrder />,
+      element: <OrderTable />,
       label: "Orders",
       icon: "MenuFoldOutlined",
       role: ["Cliente", "Administrador"]

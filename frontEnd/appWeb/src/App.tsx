@@ -1,47 +1,133 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+// src/App.tsx
+import { BrowserRouter, Navigate, Route, Routes, Outlet, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { Layout, Menu, Button, theme, Space, Dropdown } from 'antd'; 
+import { LogoutOutlined, UserOutlined, DownOutlined } from '@ant-design/icons'; 
+
 import LoginForm from './modules/login/LoginForm';
 import Dashboard from './modules/dashboard/Dashboard';
-import MenuComponent from '../src/modules/MenuDynamic'; 
+import MenuComponent from './modules/MenuDynamic'; 
 import { getAccessToken, getCurrentUser, getUserRole, logout } from './utils/auth';
-import routes from '../src/core/menuRoutes';
-import { Outlet } from "react-router-dom";
+import routes from './core/menuRoutes'; 
+
+const { Header, Sider, Content } = Layout;
 
 const ProtectedLayout: React.FC = () => {
   const role = getUserRole();
-  if (!role) {
+  const currentUser = getCurrentUser(); 
+  const navigate = useNavigate(); 
+
+  if (!role || !currentUser) {
     logout();
     return <Navigate to="/login" replace />;
   }
 
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
+
+  const userMenu = (
+    <Menu
+      onClick={({ key }) => {
+        if (key === 'logout') {
+          logout();
+          navigate('/login'); 
+        }
+      }}
+      items={[
+        {
+          key: 'username',
+          label: (
+            <span style={{ fontWeight: 'bold' }}>
+              <UserOutlined style={{ marginRight: '8px' }} />
+              {currentUser?.username || 'Usuario'}
+            </span>
+          ),
+          disabled: true, 
+        },
+        {
+          type: 'divider',
+        },
+        {
+          key: 'logout',
+          label: 'Cerrar Sesión',
+          icon: <LogoutOutlined />,
+          danger: true, 
+        },
+      ]}
+    />
+  );
+
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f0f2f5' }}>
-      <aside style={{ width: 220, background: '#001529', padding: '16px 0', boxShadow: '2px 0 6px rgba(0,0,0,0.2)' }}>
-        <h3 style={{ color: '#fff', textAlign: 'center', marginBottom: '20px', fontSize: '20px' }}>Mi App</h3>
-        <MenuComponent />
-      </aside>
+    <Layout style={{ minHeight: '100vh' }}>
+      <Sider
+        width={220}
+        theme="dark"
+        breakpoint="lg" 
+        collapsedWidth="0"
+        style={{
+          overflow: 'auto',
+          height: '100vh',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          bottom: 0,
+        }}
+      >
+        <div className="logo" style={{ height: 32, margin: 16, background: 'rgba(255, 255, 255, 0.2)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <h3
+            style={{ color: '#fff', fontSize: '18px', margin: 0, cursor: 'pointer' }}
+            onClick={() => navigate('/dashboard')}
+          >
+            Mi App
+          </h3>
+        </div>
+        <MenuComponent /> 
+      </Sider>
 
-      <main style={{ flexGrow: 1, padding: '24px', overflowY: 'auto' }}>
-        <h1 style={{ color: '#333', marginBottom: '20px' }}>Bienvenido, {getCurrentUser()?.username || 'Usuario'}</h1>
-        
-        <Outlet />
-
-        <button 
-          onClick={logout} 
-          style={{ 
-            marginTop: '20px', 
-            padding: '10px 20px', 
-            backgroundColor: '#dc3545', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '5px', 
-            cursor: 'pointer' 
+      <Layout style={{ marginLeft: 220 }}> 
+        <Header
+          style={{
+            padding: '0 24px', 
+            background: colorBgContainer, 
+            display: 'flex',
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            boxShadow: '0 1px 4px rgba(0,21,41,0.08)', 
+            position: 'sticky', 
+            top: 0,
+            zIndex: 100, 
           }}
         >
-          Cerrar Sesión
-        </button>
-      </main>
-    </div>
+          <h1 style={{ margin: 0, fontSize: '24px', color: '#333' }}>Bienvenido, {currentUser?.username || 'Usuario'}</h1>
+          
+          <Dropdown overlay={userMenu} placement="bottomRight" arrow>
+            <Button type="text" style={{ color: '#333' }}>
+              <Space>
+                <UserOutlined />
+                {currentUser?.username || 'Usuario'}
+                <DownOutlined />
+              </Space>
+            </Button>
+          </Dropdown>
+
+        </Header>
+
+        <Content
+          style={{
+            margin: '24px 16px',
+            padding: 24,
+            minHeight: 'calc(100vh - 64px - 48px)', 
+            background: colorBgContainer,
+            borderRadius: 8,
+            overflowY: 'auto', 
+          }}
+        >
+          <Outlet /> 
+        </Content>
+      </Layout>
+    </Layout>
   );
 };
 
@@ -69,7 +155,7 @@ function App() {
     checkAuth();
 
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === "token" || event.key === "user" || !event.key) { // !event.key para cambios generales
+      if (event.key === "token" || event.key === "user" || !event.key) {
         console.log("App - Storage change detected, re-checking authentication.");
         checkAuth();
       }
@@ -77,13 +163,16 @@ function App() {
 
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
-  }, []); // Se ejecuta una vez al montar
+  }, []); 
 
   if (loading) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', backgroundColor: '#333', color: '#fff', fontSize: '24px' }}>Cargando aplicación...</div>;
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', backgroundColor: '#f0f2f5', color: '#333', fontSize: '24px' }}>
+        Cargando aplicación...
+      </div>
+    );
   }
 
-  // Obtenemos el rol del usuario para el mapeo de rutas protegidas
   const currentUserRole = getUserRole();
 
   return (
@@ -95,18 +184,16 @@ function App() {
         />
         
         {isAuthenticated ? (
-          <Route element={<ProtectedLayout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/" element={<ProtectedLayout />}>
+            <Route index element={<Navigate to="/dashboard" replace />} /> 
+            <Route path="dashboard" element={<Dashboard />} /> 
 
             {routes.map((route) => {
               const hasRequiredRole = route.role ? route.role.includes(currentUserRole!) : true;
-
               return hasRequiredRole ? (
-                <Route key={route.path} path={route.path} element={route.element} />
-              ) : null; // Si no tiene el rol, no renderiza la ruta
+                <Route key={route.path} path={route.path.substring(1)} element={route.element} /> 
+              ) : null;
             })}
-
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Route>
         ) : (
           <Route path="*" element={<Navigate to="/login" replace />} />
