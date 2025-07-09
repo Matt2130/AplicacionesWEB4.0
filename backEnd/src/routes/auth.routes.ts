@@ -4,7 +4,7 @@ import { getTimeToken, loginMethod, updateToken, getAllUsers,
 import { createOrder, deleteOrder, getOrder, updateOrder } from "../controllers/order.controller";
 import { createProduct, getProducts, updateProducts, deleteProduct } from "../controllers/product.controller";
 import { createRole, getRole } from "../controllers/role.controller";
-import { createMenu, getMenuRol } from "../controllers/menu.controller";
+import { createMenu, getMenuRol, deleteMenu } from "../controllers/menu.controller";
 
 const router = Router();
 
@@ -37,5 +37,6 @@ router.get('/getAllRoles', getRole);
 //Controlador para Menu CRUD
 router.post('/createMenu', createMenu);
 router.get('/getMenu/:type', getMenuRol);
+router.patch('/deleteMenu/:menuId', deleteMenu);
 
 export default router;

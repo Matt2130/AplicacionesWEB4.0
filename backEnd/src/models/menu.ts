@@ -10,6 +10,7 @@ export interface IMenu extends Document {
     path: string;
     icon: string;
     roles: IMenuRoles[];
+    status: boolean;
 }
 
 const menuRolesSchema = new Schema<IMenuRoles>({
@@ -32,6 +33,10 @@ const menuSchema = new Schema<IMenu>({
     icon: { 
         type: String, 
         required: true 
+    },
+    status: {
+        type: Boolean,
+        default: true
     },
     roles: {
         type: [menuRolesSchema],

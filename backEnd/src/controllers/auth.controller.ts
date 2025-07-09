@@ -6,25 +6,27 @@ import { User } from "../models/User"
 import bcrypt from "bcrypt";
 
 export const loginMethod = async (req: Request, res: Response) => {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
 
-    // Buscar usuario en Mongo por username
-    const user = await User.findOne({ username });
+  const user = await User.findOne({ username });
 
-    // Si no existe usuario o la contraseña no coincide
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-        return res.status(401).json({ message: "Credenciales incorrectas" });
-    }
+  if (!user || !(await bcrypt.compare(password, user.password))) {
+    return res.status(401).json({ message: "Credenciales incorrectas" });
+  }
 
-    // Crear token
-    const userId = user._id.toString();
-    const accessToken = generateAccessToken(userId);
+  const roles = user.roles.map((r) => r.type);
 
-    // Guardar token en cache
-    cache.set(userId, accessToken, 60 * 15);
+  const userId = user._id.toString();
+  const accessToken = generateAccessToken(user._id.toString(), user.roles[0].type);
 
-    // Retornar token
-    return res.json({ accessToken });
+  cache.set(userId, accessToken, 60 * 15);
+
+  // Devuelve el usuario completo (sin contraseña) junto con el token
+  const userObj = user.toObject();
+  if (userObj.password !== undefined) {
+    userObj.password = "";
+  }
+  return res.json({ accessToken, user: userObj });
 };
 
 export const getTimeToken = (req: Request, res: Response) => {
